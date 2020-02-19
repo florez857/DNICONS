@@ -2,10 +2,12 @@ package com.example.dni_cons;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,8 +29,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        personaConsultaViewModel = ViewModelProviders.of(MainActivity.this).get(PersonaConsultaViewModel.class);
         configView();
+        personaConsultaViewModel = ViewModelProviders.of(MainActivity.this).get(PersonaConsultaViewModel.class);
+        personaConsultaViewModel.getDni().observe(this, new Observer<PersonaResponse>() {
+            @Override
+            public void onChanged(@Nullable PersonaResponse personaResponse) {
+
+                rv.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                mAdapter = new mAdapter(personaResponse.getDatosPerson());
+                //adapter.setList(personaResponse.getDatosPerson());
+                rv.setAdapter(mAdapter);}
+
+
+        });
+
     }
 
 
@@ -48,11 +62,14 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+
     }
 
     public void getList(String dni){
-        personaConsultaViewModel.getData(dni)
-                .observe(this, new Observer<PersonaResponse>() {
+        personaConsultaViewModel.getData(dni);
+                /*.observe(this, new Observer<PersonaResponse>() {
                     @Override
                     public void onChanged(PersonaResponse personaResponse) {
                         rv.setLayoutManager(new LinearLayoutManager(MainActivity.this));
@@ -60,6 +77,6 @@ public class MainActivity extends AppCompatActivity {
                         //adapter.setList(personaResponse.getDatosPerson());
                         rv.setAdapter(mAdapter);
                     }
-                });
+                });*/
     }
 }
